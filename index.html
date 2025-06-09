@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mathe-Quiz</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f4f4f4;
+    }
+    .slide {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    .active {
+      display: flex;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    .card p {
+      font-size: 1.2em;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 1em;
+      background: #eee;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      text-align: left;
+      touch-action: manipulation;
+    }
+    .option.selected {
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+    .nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .nav button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      touch-action: manipulation;
+    }
+    .result {
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div class="slide active" id="slide0">
+  <div class="card">
+    <p>1. Was ist 7 + 5?</p>
+    <button class="option" onclick="setAnswer(0, 'a', this)">11</button>
+    <button class="option" onclick="setAnswer(0, 'b', this)">12</button>
+    <button class="option" onclick="setAnswer(0, 'c', this)">13</button>
+    <div class="nav">
+      <button onclick="nextSlide(0)">Weiter</button>
+    </div>
+  </div>
+</div>
+<div class="slide" id="slide1">
+  <div class="card">
+    <p>2. Was ist 6 × 3?</p>
+    <button class="option" onclick="setAnswer(1, 'a', this)">18</button>
+    <button class="option" onclick="setAnswer(1, 'b', this)">12</button>
+    <button class="option" onclick="setAnswer(1, 'c', this)">18</button>
+    <div class="nav">
+      <button onclick="nextSlide(1)">Weiter</button>
+    </div>
+  </div>
+</div>
+<div class="slide" id="slide2">
+  <div class="card">
+    <p>3. Was ist 10 - 4?</p>
+    <button class="option" onclick="setAnswer(2, 'a', this)">6</button>
+    <button class="option" onclick="setAnswer(2, 'b', this)">5</button>
+    <button class="option" onclick="setAnswer(2, 'c', this)">7</button>
+    <div class="nav">
+      <button onclick="showResult()">Auswerten</button>
+    </div>
+  </div>
+</div>
+<div class="slide" id="resultSlide">
+  <div class="card">
+    <p class="result" id="resultText"></p>
+    <div class="nav">
+      <button onclick="window.location.reload()">Neu starten</button>
+    </div>
+  </div>
+</div>
+<script>
+  const answers = {};
+  const correct = ['b', 'c', 'a'];
+
+  function setAnswer(questionIndex, value, element) {
+    answers[questionIndex] = value;
+    const options = element.parentElement.querySelectorAll('.option');
+    options.forEach(btn => btn.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+  function nextSlide(current) {
+    document.getElementById('slide' + current).classList.remove('active');
+    document.getElementById('slide' + (current + 1)).classList.add('active');
+  }
+  function showResult() {
+    let score = 0;
+    correct.forEach((val, i) => {
+      if (answers[i] === val) score++;
+    });
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById('resultSlide').classList.add('active');
+    document.getElementById('resultText').textContent = `Du hast ${score} von ${correct.length} Punkten erreicht.`;
+  }
+</script>
+</body>
+</html>
