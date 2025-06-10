@@ -87,6 +87,7 @@
 </head>
 <body>
 
+<div id="progressStatus" style="text-align:center;font-size:1.2rem;margin-bottom:1rem;font-weight:bold;">Richtig: 0 von 3</div>
 <div class="slide active" id="slide0">
   <div class="card">
     <p>1. Was ist 7 + 5?</p>
@@ -144,6 +145,7 @@
       const container = btn.parentElement;
       container.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
       btn.classList.add('selected');
+      updateCounter();
       const slideIndex = Array.from(document.querySelectorAll('.slide')).indexOf(container.parentElement);
       answers[slideIndex] = btn.dataset.value;
     });
@@ -206,6 +208,17 @@ sound.play();
       alert("Diese Funktion wird von deinem Gerät oder Browser nicht unterstützt.");
     }
   }
+
+  function updateCounter() {
+    let correctCount = 0;
+    correct.forEach((val, i) => {
+      if (answers[i] === val) {
+        correctCount++;
+      }
+    });
+    document.getElementById("progressStatus").textContent = `Richtig: ${correctCount} von ${correct.length}`;
+  }
+
 </script>
 
 </body>
