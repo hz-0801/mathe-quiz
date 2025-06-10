@@ -90,11 +90,11 @@
 <div class="slide active" id="slide0">
   <div class="card">
     <p>1. Was ist 7 + 5?</p>
-    <button class="option" data-value="a">11</button>
-    <button class="option" data-value="b">12</button>
-    <button class="option" data-value="c">13</button>
+    <button class="option" type="button" data-value="a">11</button>
+    <button class="option" type="button" data-value="b">12</button>
+    <button class="option" type="button" data-value="c">13</button>
     <div class="nav">
-      <button onclick="nextSlide(0)">Weiter</button>
+      <button onclick="nextSlide(0)" type="button">Weiter</button>
     </div>
   </div>
 </div>
@@ -102,11 +102,11 @@
 <div class="slide" id="slide1">
   <div class="card">
     <p>2. Was ist 6 × 3?</p>
-    <button class="option" data-value="a">18</button>
-    <button class="option" data-value="b">12</button>
-    <button class="option" data-value="c">18</button>
+    <button class="option" type="button" data-value="a">18</button>
+    <button class="option" type="button" data-value="b">12</button>
+    <button class="option" type="button" data-value="c">18</button>
     <div class="nav">
-      <button onclick="nextSlide(1)">Weiter</button>
+      <button onclick="nextSlide(1)" type="button">Weiter</button>
     </div>
   </div>
 </div>
@@ -114,11 +114,11 @@
 <div class="slide" id="slide2">
   <div class="card">
     <p>3. Was ist 10 - 4?</p>
-    <button class="option" data-value="a">6</button>
-    <button class="option" data-value="b">5</button>
-    <button class="option" data-value="c">7</button>
+    <button class="option" type="button" data-value="a">6</button>
+    <button class="option" type="button" data-value="b">5</button>
+    <button class="option" type="button" data-value="c">7</button>
     <div class="nav">
-      <button onclick="showResult()">Auswerten</button>
+      <button onclick="showResult()" type="button">Auswerten</button>
     </div>
   </div>
 </div>
@@ -127,8 +127,8 @@
   <div class="card">
     <p class="result" id="resultText"></p>
     <div class="nav">
-      <button onclick="window.location.reload()">Neu starten</button>
-      <button class="exit" onclick="closeApp()">App schließen</button>
+      <button onclick="window.location.reload()" type="button">Neu starten</button>
+      <button class="exit" onclick="closeApp()" type="button">App schließen</button>
     </div>
   </div>
 </div>
@@ -136,10 +136,11 @@
 <script>
   const answers = {};
   const correct = ['b', 'a', 'a'];
-  let repeated = false;
+  let cumulativeCorrect = 0;
+  let totalAsked = correct.length;
 
   document.querySelectorAll('.option').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('pointerdown', () => {
       const container = btn.parentElement;
       container.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
       btn.classList.add('selected');
@@ -165,15 +166,14 @@
       }
     });
 
-    const total = correct.length;
-    const percent = Math.round((score / total) * 100);
+    cumulativeCorrect += score;
+    const percent = Math.round((cumulativeCorrect / totalAsked) * 100);
 
-    const sound = new Audio('https://www.soundjay.com/button/beep-07.mp3');
-    sound.play();
+    const sound = new Audio('49f8bb60-c590-4332-ada4-4ac6be3ccd29.mp3');
+sound.play();
 
-    if (percent < 80 && !repeated) {
-      repeated = true;
-      alert("Du hast weniger als 80 % richtig. Wiederhole die falschen Fragen!");
+    if (percent < 80) {
+      alert(`Aktueller Stand: ${cumulativeCorrect} von ${totalAsked} richtig (${percent} %). Wiederhole die falschen Fragen.`);
       resetSlides(wrongSlides);
       return;
     }
@@ -181,7 +181,7 @@
     document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
     document.getElementById('resultSlide').classList.add('active');
     document.getElementById('resultText').textContent =
-      `Du hast ${score} von ${total} Punkten erreicht (${percent} %).`;
+      `Du hast ${cumulativeCorrect} von ${totalAsked} Punkten erreicht (${percent} %).`;
   }
 
   function resetSlides(indices) {
