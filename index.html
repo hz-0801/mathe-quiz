@@ -42,7 +42,6 @@
       border-radius: 8px;
       width: 100%;
       text-align: left;
-      touch-action: manipulation;
     }
     .option.selected {
       background: #007bff;
@@ -60,7 +59,6 @@
       background: #007bff;
       color: white;
       border-radius: 8px;
-      touch-action: manipulation;
     }
     .result {
       font-size: 1.3em;
@@ -69,39 +67,43 @@
   </style>
 </head>
 <body>
+
 <div class="slide active" id="slide0">
   <div class="card">
     <p>1. Was ist 7 + 5?</p>
-    <button class="option" onclick="setAnswer(0, 'a', this)">11</button>
-    <button class="option" onclick="setAnswer(0, 'b', this)">12</button>
-    <button class="option" onclick="setAnswer(0, 'c', this)">13</button>
+    <button class="option" data-value="a">11</button>
+    <button class="option" data-value="b">12</button>
+    <button class="option" data-value="c">13</button>
     <div class="nav">
       <button onclick="nextSlide(0)">Weiter</button>
     </div>
   </div>
 </div>
+
 <div class="slide" id="slide1">
   <div class="card">
     <p>2. Was ist 6 × 3?</p>
-    <button class="option" onclick="setAnswer(1, 'a', this)">18</button>
-    <button class="option" onclick="setAnswer(1, 'b', this)">12</button>
-    <button class="option" onclick="setAnswer(1, 'c', this)">18</button>
+    <button class="option" data-value="a">18</button>
+    <button class="option" data-value="b">12</button>
+    <button class="option" data-value="c">18</button>
     <div class="nav">
       <button onclick="nextSlide(1)">Weiter</button>
     </div>
   </div>
 </div>
+
 <div class="slide" id="slide2">
   <div class="card">
     <p>3. Was ist 10 - 4?</p>
-    <button class="option" onclick="setAnswer(2, 'a', this)">6</button>
-    <button class="option" onclick="setAnswer(2, 'b', this)">5</button>
-    <button class="option" onclick="setAnswer(2, 'c', this)">7</button>
+    <button class="option" data-value="a">6</button>
+    <button class="option" data-value="b">5</button>
+    <button class="option" data-value="c">7</button>
     <div class="nav">
       <button onclick="showResult()">Auswerten</button>
     </div>
   </div>
 </div>
+
 <div class="slide" id="resultSlide">
   <div class="card">
     <p class="result" id="resultText"></p>
@@ -110,20 +112,26 @@
     </div>
   </div>
 </div>
+
 <script>
   const answers = {};
   const correct = ['b', 'c', 'a'];
 
-  function setAnswer(questionIndex, value, element) {
-    answers[questionIndex] = value;
-    const options = element.parentElement.querySelectorAll('.option');
-    options.forEach(btn => btn.classList.remove('selected'));
-    element.classList.add('selected');
-  }
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const container = btn.parentElement;
+      container.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+      btn.classList.add('selected');
+      const slideIndex = Array.from(document.querySelectorAll('.slide')).indexOf(container.parentElement);
+      answers[slideIndex] = btn.dataset.value;
+    });
+  });
+
   function nextSlide(current) {
     document.getElementById('slide' + current).classList.remove('active');
     document.getElementById('slide' + (current + 1)).classList.add('active');
   }
+
   function showResult() {
     let score = 0;
     correct.forEach((val, i) => {
@@ -134,5 +142,6 @@
     document.getElementById('resultText').textContent = `Du hast ${score} von ${correct.length} Punkten erreicht.`;
   }
 </script>
+
 </body>
 </html>
