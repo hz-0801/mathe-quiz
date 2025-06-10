@@ -2,19 +2,12 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mathe-Quiz</title>
-  <meta name="theme-color" content="#007bff"/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Mathe-Quiz">
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="manifest" href="manifest.json">
-
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: sans-serif;
       background: #f4f4f4;
       padding: 10px;
     }
@@ -59,11 +52,6 @@
       border-radius: 12px;
       width: 100%;
       text-align: left;
-      transition: background 0.2s;
-    }
-
-    .option:active {
-      background: #ccc;
     }
 
     .option.selected {
@@ -148,6 +136,7 @@
 <script>
   const answers = {};
   const correct = ['b', 'a', 'a'];
+  let repeated = false;
 
   document.querySelectorAll('.option').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -166,20 +155,44 @@
 
   function showResult() {
     let score = 0;
+    const wrongSlides = [];
+
     correct.forEach((val, i) => {
-      if (answers[i] === val) score++;
+      if (answers[i] === val) {
+        score++;
+      } else {
+        wrongSlides.push(i);
+      }
     });
 
     const total = correct.length;
     const percent = Math.round((score / total) * 100);
 
+    const sound = new Audio('https://www.soundjay.com/button/beep-07.mp3');
+    sound.play();
+
+    if (percent < 80 && !repeated) {
+      repeated = true;
+      alert("Du hast weniger als 80 % richtig. Wiederhole die falschen Fragen!");
+      resetSlides(wrongSlides);
+      return;
+    }
+
     document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
     document.getElementById('resultSlide').classList.add('active');
     document.getElementById('resultText').textContent =
       `Du hast ${score} von ${total} Punkten erreicht (${percent} %).`;
+  }
 
-    const sound = new Audio('https://www.soundjay.com/button/beep-07.mp3');
-    sound.play();
+  function resetSlides(indices) {
+    document.querySelectorAll('.slide').forEach((s, i) => {
+      if (indices.includes(i)) {
+        s.classList.add('active');
+        s.scrollIntoView();
+      } else {
+        s.classList.remove('active');
+      }
+    });
   }
 
   function closeApp() {
